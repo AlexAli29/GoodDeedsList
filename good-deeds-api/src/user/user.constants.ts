@@ -1,0 +1,1 @@
+export const FRIEND_NOT_FOUND ='Friend not found';

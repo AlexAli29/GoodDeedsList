@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { prop } from '@typegoose/typegoose';
+import { Base, TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 
 export enum RequestStatus{
@@ -8,7 +9,8 @@ Accepted,
 Rejected
 }
 
-export class FriendRequestModel{
+export interface FriendRequestModel extends Base {}
+export class FriendRequestModel extends TimeStamps{
 
   @prop()
   senderId:Types.ObjectId;
@@ -16,6 +18,6 @@ export class FriendRequestModel{
   @prop()
   recipientId: Types.ObjectId;
 
-  @prop()
+  @prop({enum:RequestStatus})
   status:RequestStatus
 }

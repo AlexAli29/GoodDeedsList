@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Patch, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, UseFilters, UseGuards } from '@nestjs/common';
 import { USER_NOT_FOUND } from 'src/auth/auth.constants';
 import { AccessTokenAuthGuard } from 'src/auth/guards/access-token.guard';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { UserService } from './user.service';
 import { MongoExceptionFilter } from 'src/filters/mongo-exeption.filter';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
+import { Types } from 'mongoose';
 
 @Controller('user')
 export class UserController {
@@ -15,7 +16,7 @@ export class UserController {
 
   @UseGuards(AccessTokenAuthGuard)
   @Get()
-  async getcurrentUser(@UserId() id:string){
+  async getcurrentUser(@UserId() id:Types.ObjectId){
 
     const User = await this.userService.findUserById(id);
   
@@ -29,12 +30,12 @@ export class UserController {
   @HttpCode(201)
   @UseGuards(AccessTokenAuthGuard)
   @Delete()
-  async delete(@UserId() id:string){
+  async delete(@UserId() id:Types.ObjectId){
 
     const deletedUser = await this.userService.deleteUser(id);
   
     if (!deletedUser) {      
-			throw new NotFoundException(USER_NOT_FOUND);      
+			throw new HttpException(USER_NOT_FOUND,HttpStatus.NOT_FOUND)     
 		}  
   }
 
@@ -42,13 +43,42 @@ export class UserController {
   @UseGuards(AccessTokenAuthGuard)
   @UseFilters(MongoExceptionFilter)
   @Patch()
-  async update(@UserId() id:string, @Body() dto:RegisterUserDto){
+  async update(@UserId() id:Types.ObjectId, @Body() dto:RegisterUserDto){
 
     const updatedUser = await this.userService.updateUser(id,dto);
+
+    if(!updatedUser){
+      throw new HttpException(USER_NOT_FOUND,HttpStatus.NOT_FOUND)
+    }
 
     return{
       updatedUser
     }
 
   }
+
+  @UseGuards(AccessTokenAuthGuard)
+  @Get('friends')
+  async getFriends(@Body() friendsIds:Types.ObjectId[]){
+    const friends = await this.userService.getFriends(friendsIds);
+
+    return friends;
+  }
+
+  @UseGuards(AccessTokenAuthGuard)
+  @Post('friends/:recipientId')
+  async addFriend(@UserId() senderId:Types.ObjectId,@Param('recipientId') recipientId:Types.ObjectId){
+    const friends = await this.userService.addFriend(senderId,recipientId);
+
+    return friends;
+  }
+
+  @UseGuards(AccessTokenAuthGuard)
+  @Delete('friends/:friendToDeleteId')
+  async deleteFriend(@UserId() senderId:Types.ObjectId,@Param('friendToDeleteId') friendToDeleteId:Types.ObjectId){
+    const friends = await this.userService.deleteFriend(senderId,friendToDeleteId);
+
+    return friends;
+  }
+
 }

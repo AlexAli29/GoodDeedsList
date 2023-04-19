@@ -39,6 +39,13 @@ async get(@UserId() userId){
 }
 
 @UseGuards(AccessTokenAuthGuard)
+@Get('friend/:userId')
+async getForFriend(@Param('userId') userId){
+  
+  return await this.deedService.getUsersDeeds(userId);
+}
+
+@UseGuards(AccessTokenAuthGuard)
 @Delete(':id')
 async delete(@Param('id') id:Types.ObjectId){
 

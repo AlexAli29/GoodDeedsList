@@ -9,6 +9,7 @@ import { RefreshTokenAuthGuard } from './guards/refresh-token.guard';
 import { Types } from 'mongoose';
 
 import { UserService } from 'src/user/user.service';
+import { AccessTokenAuthGuard } from './guards/access-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -37,6 +38,7 @@ constructor(private readonly authService : AuthService, private readonly userSer
   }
 
   @HttpCode(200)
+  
   @Post('login')
   async login(@Body() dto :LoginUserDto, @Res({ passthrough: true }) res:Response){
     const user = await this.authService.validateUser(dto);
@@ -64,4 +66,14 @@ constructor(private readonly authService : AuthService, private readonly userSer
     }
   }
 
+
+  @UseGuards(AccessTokenAuthGuard)
+  @Get('logout')
+  async logout (@Res({ passthrough: true }) res:Response){
+
+   
+    res.clearCookie('refresh_token');
+
+    return res;
+  }
 }

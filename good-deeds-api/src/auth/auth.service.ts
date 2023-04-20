@@ -17,7 +17,7 @@ export class AuthService {
   constructor(@InjectModel(UserModel) private readonly userModel:ModelType<UserModel>,private readonly jwtService: JwtService, private readonly configService :ConfigService, private readonly userService:UserService){}
 
   async register(dto: RegisterUserDto ){
-
+    
     const salt = await genSalt(10);   
 
     const newUser = new this.userModel({

@@ -8,6 +8,7 @@ import { genSalt, hash } from 'bcryptjs';
 import { Types } from 'mongoose';
 import { USER_NOT_FOUND } from 'src/auth/auth.constants';
 import { FRIEND_NOT_FOUND } from './user.constants';
+import UserViewModel from './view-models/user.viewModel';
 
 @Injectable()
 export class UserService {
@@ -15,7 +16,7 @@ export class UserService {
   constructor(@InjectModel(UserModel) private readonly userModel:ModelType<UserModel>,private readonly configService :ConfigService){}
 
 
-  async deleteUser(id: Types.ObjectId) : Promise<DocumentType<UserModel> | null> {
+  async deleteUser(id: Types.ObjectId) : Promise<DocumentType<UserViewModel> | null> {
 
     return this.userModel.findByIdAndDelete(id).exec();
   }
@@ -53,7 +54,7 @@ async addFriend(senderId:Types.ObjectId, recipientId:Types.ObjectId){
 
 async getFriends(friendsIds:Types.ObjectId[]){
 
-  const friends= await this.userModel.find({ _id: { $in: friendsIds } }).select('_id name').exec();
+  const friends :Pick<UserModel,'_id' | 'name'>[]= await this.userModel.find({ _id: { $in: friendsIds } }).select('_id name').exec();
 
   return friends
 }
@@ -77,15 +78,39 @@ async deleteFriend(senderId:Types.ObjectId,friendToDeleteId:Types.ObjectId){
   (await sender.save()).isNew=false;
 }
 
-  async findUserById(_id:Types.ObjectId):Promise<DocumentType<UserModel> | null>{
-    return this.userModel.findById(_id).exec();
+  async findUserById(_id:Types.ObjectId):Promise<UserViewModel | null>{
+    const user = await this.userModel.findById
+    (_id).exec();
+    if(!user){
+      return null;
+    }
+    const userViewModel = new UserViewModel();
+    userViewModel._id = user._id;
+    userViewModel.name = user.name;
+    userViewModel.email= user.email;
+    userViewModel.friendsIds= user.friendsIds;
+    
+    return userViewModel
   }
 
-  async findUserByEmail(email:string):Promise<DocumentType<UserModel> | null>{
-    return this.userModel.findOne({email}).exec();
+  async findUserByEmail(email:string):Promise<UserViewModel | null>{
+
+    const user =await this.userModel.findOne({email}).exec();
+    if(!user){
+      return null
+    }
+    
+    const userViewModel = new UserViewModel();
+    userViewModel._id = user._id;
+    userViewModel.name = user.name;
+    userViewModel.email= user.email;
+    userViewModel.friendsIds= user.friendsIds;
+
+
+    return userViewModel    
   }
 
-  async findUserByName(name:string):Promise<DocumentType<UserModel> | null>{
+  async findUserByName(name:string):Promise<DocumentType<UserModel> | null>{    
     return this.userModel.findOne({name}).exec();
   }
 

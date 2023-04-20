@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import { MongoExceptionFilter } from 'src/filters/mongo-exeption.filter';
 import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 import { Types } from 'mongoose';
+import UserViewModel from './view-models/user.viewModel';
 
 @Controller('user')
 export class UserController {
@@ -19,7 +20,7 @@ export class UserController {
   async getcurrentUser(@UserId() id:Types.ObjectId){
 
     const User = await this.userService.findUserById(id);
-  
+
     if (!User) {      
 			throw new NotFoundException(USER_NOT_FOUND);      
 		}  

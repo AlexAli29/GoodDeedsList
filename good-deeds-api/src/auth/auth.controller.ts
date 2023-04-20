@@ -19,7 +19,7 @@ constructor(private readonly authService : AuthService, private readonly userSer
   @UsePipes(new ValidationPipe)
   @Post('register')
   async register (@Body() dto :RegisterUserDto, @Res({ passthrough: true }) res:Response){
-
+    
     const userByEmail = await this.userService.findUserByEmail(dto.email);
     if(userByEmail){
       throw new HttpException(EMAIL_ALREADY_TAKEN,HttpStatus.CONFLICT)

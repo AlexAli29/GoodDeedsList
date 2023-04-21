@@ -53,13 +53,13 @@ useEffect(()=>{
 
 },[])
 
-const handelDeleteFriend = async (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>,id:string) =>{
-  e.preventDefault();
-  debugger
+const handelDeleteFriend = async (id:string) =>{
+  
+  
   const deleteFriendRes = await deleteFriend(id);
  
-  if('data' in deleteFriendRes){
-    dispatch(removeFriendId(deleteFriendRes.data))
+  if(!('error' in deleteFriendRes)){
+    dispatch(removeFriendId(id));
   }
 }
 
@@ -88,7 +88,7 @@ const handelDeleteFriend = async (e:  React.MouseEvent<HTMLButtonElement, MouseE
         </div>   
     <div className={style['add-friend-container']}>
       <input value={requestName} className={style['request_input']} onChange={(e)=>setRequestName(e.target.value)} placeholder='user name' type="text" />
-      <Button action={handleAddRequest}>Send</Button>
+      <Button action={handleAddRequest}>Send Requests</Button>
     </div>
     </div>
     <h3>Friends:</h3>
@@ -101,7 +101,7 @@ const handelDeleteFriend = async (e:  React.MouseEvent<HTMLButtonElement, MouseE
               <Link href={`user/${friend._id}`}>
               <span className={style['friend_name']}>User name: {friend.name}</span>
               </Link>
-              <button onClick={(e)=>{handelDeleteFriend(e,friend._id)}} className={style['delete_friend']}>Delete</button>
+              <button onClick={(e)=>{handelDeleteFriend(friend._id)}} className={style['delete_friend']}>Delete</button>
             </div>
             
           )

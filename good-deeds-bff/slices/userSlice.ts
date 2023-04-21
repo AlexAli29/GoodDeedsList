@@ -30,7 +30,7 @@ export const userSlice = createSlice({
       state.name = null;
     },
     removeFriendId:(state, action:PayloadAction<string>)=>{
-      debugger
+  
       const friendIndex = state?.friendsIds?.findIndex((friendId) => friendId === action.payload);
       if (friendIndex !== -1) {
         state?.friendsIds?.splice(friendIndex ?? -1,1);

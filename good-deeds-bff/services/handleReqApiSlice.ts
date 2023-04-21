@@ -1,3 +1,4 @@
+import { BaseQueryArg, BaseQueryResult } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { apiSlice } from "./apiSlice";
 
 
@@ -27,7 +28,7 @@ export const reqHandler = apiSlice.injectEndpoints({
       }),     
     }),
 
-    getFriendDeeds: build.mutation<any,void>({
+    getFriendDeeds: build.mutation({
       query: (id) => ({
         url: `api/deed/friend/${id}`,
         method: "GET",

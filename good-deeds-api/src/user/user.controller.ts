@@ -67,6 +67,7 @@ export class UserController {
   @UseGuards(AccessTokenAuthGuard)
   @Post('friends/:recipientId')
   async addFriend(@UserId() senderId:Types.ObjectId,@Param('recipientId') recipientId:Types.ObjectId){
+    
     const friends = await this.userService.addFriend(senderId,recipientId);
 
     return friends;
@@ -75,9 +76,9 @@ export class UserController {
   @UseGuards(AccessTokenAuthGuard)
   @Delete('friends/:friendToDeleteId')
   async deleteFriend(@UserId() senderId:Types.ObjectId,@Param('friendToDeleteId') friendToDeleteId:Types.ObjectId){
-    const friends = await this.userService.deleteFriend(senderId,friendToDeleteId);
     
-    return friends;
+    const friends = await this.userService.deleteFriend(senderId,friendToDeleteId);   
+    
   }
 
 }

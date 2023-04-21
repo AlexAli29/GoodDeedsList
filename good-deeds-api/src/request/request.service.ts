@@ -22,6 +22,10 @@ export class RequestService {
     throw new ConflictException(ALREADY_FRIEND);
    }
 
+   if(recipient.friendsIds.includes(sender._id)){
+    throw new ConflictException(ALREADY_FRIEND);
+   }
+
    const newRequest= new this.requestModel({
     senderId:senderId,
     senderName:sender.name,

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserModel } from './user.model';
 import { InjectModel } from 'nestjs-typegoose';
 import { DocumentType, ModelType } from '@typegoose/typegoose/lib/types';
@@ -9,6 +9,7 @@ import { Types } from 'mongoose';
 import { USER_NOT_FOUND } from 'src/auth/auth.constants';
 import { FRIEND_NOT_FOUND } from './user.constants';
 import UserViewModel from './view-models/user.viewModel';
+import { ALREADY_FRIEND } from 'src/request/request.constants';
 
 @Injectable()
 export class UserService {
@@ -35,13 +36,24 @@ export class UserService {
   }
 
 async addFriend(senderId:Types.ObjectId, recipientId:Types.ObjectId){
+  
   const sender = await this.userModel.findById(senderId);
+  
   const recipient = await this.userModel.findById(recipientId);
+
+  if(sender.friendsIds.includes(recipient._id)){
+    throw new ConflictException(ALREADY_FRIEND);
+   }
+
+   if(recipient.friendsIds.includes(sender._id)){
+    throw new ConflictException(ALREADY_FRIEND);
+   }
+  
   if(!(sender && recipient))
   {
     throw new NotFoundException(USER_NOT_FOUND);
   }
-
+  
   sender.friendsIds.push(recipient._id);
   (await sender.save()).isNew=false;
 
@@ -69,16 +81,9 @@ async deleteFriend(senderId:Types.ObjectId,friendToDeleteId:Types.ObjectId){
     throw new NotFoundException(USER_NOT_FOUND);
   }
 
-  const friendIndex =sender.friendsIds.findIndex(id => id == friendToDeleteId);
-
-  if(friendIndex==-1){
-    throw new NotFoundException(FRIEND_NOT_FOUND);
-  }
-
-  const newFriendsArray =  sender.friendsIds.slice(friendIndex,1);
-  sender.friendsIds = newFriendsArray;
-  
-  (await sender.save()).isNew=false;
+  this.userModel.findByIdAndUpdate(sender._id ,
+    { $pull: { friendsIds: friendToDeleteId } }
+  ).exec();  
 
   return friendToDeleteId
 }

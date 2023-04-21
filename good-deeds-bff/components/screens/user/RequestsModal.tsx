@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/rtkHooks";
 import { Button } from "@/components/ui/Button/Button";
 import { removeRequest, selectRequests } from "@/slices/requestSlice";
 import {setRequests as setRequestsSlice } from '@/slices/requestSlice'
+import Friend from "@/types/friend";
 
 interface FormValues {
   title: string;  
@@ -17,9 +18,10 @@ interface FormValues {
 
 interface Props{
   setRequestsModalActive :Dispatch<SetStateAction<boolean>>
+  setFriends: Dispatch<SetStateAction<Friend[]>>
 }
 
-export const RequestsModal:FC<Props> = ({setRequestsModalActive})=>{
+export const RequestsModal:FC<Props> = ({setRequestsModalActive, setFriends})=>{
   const requestsFromSlice = useAppSelector(selectRequests);
   const [requests,setRequests] = useState(requestsFromSlice);
   const dispatch = useAppDispatch();
@@ -45,10 +47,11 @@ export const RequestsModal:FC<Props> = ({setRequestsModalActive})=>{
 
   }, []);
 
-  const handleAddFriend = async (recipientId:string,_id:string) =>{
+  const handleAddFriend = async (recipientId:string,_id:string, senderName:string) =>{
     const res = await addFriend(recipientId);
     const deleteRes = await deleteRequest(_id)
     if('data' in deleteRes){
+      setFriends((prev)=>[...prev,{_id:_id,name:senderName}]);
       dispatch(removeRequest(deleteRes.data));
     }
   }
@@ -70,7 +73,7 @@ export const RequestsModal:FC<Props> = ({setRequestsModalActive})=>{
         return(
           <div className={style['request']}>
             <span>User:{request.senderName} wants to add as friend  </span>
-            <Button action={()=>{handleAddFriend(request.senderId,request._id)}}>Add</Button>
+            <Button action={()=>{handleAddFriend(request.senderId,request._id,request.senderName)}}>Add</Button>
             <Button action={()=>{handleDenyRequest(request._id)}} color="danger">Deny</Button>
           </div>
         )

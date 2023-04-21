@@ -46,11 +46,7 @@ const handleAddRequest = async()=>{
 }
 
 useEffect(()=>{
-
-  
-
   fetchFriends();
-
 },[])
 
 const handelDeleteFriend = async (id:string) =>{
@@ -73,7 +69,7 @@ const handelDeleteFriend = async (id:string) =>{
   return (
    <div className={style['content']}>
      <div className={`${style['modal']} ${requestsModalActive?style['active']:null}`}>          
-          <RequestsModal setRequestsModalActive={setRequestsModalActive}/>
+          <RequestsModal setRequestsModalActive={setRequestsModalActive} setFriends={setFriends}/>
           
           </div>
     <div className={style['to-deeds']}></div>

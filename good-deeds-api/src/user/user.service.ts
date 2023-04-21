@@ -85,6 +85,10 @@ async deleteFriend(senderId:Types.ObjectId,friendToDeleteId:Types.ObjectId){
     { $pull: { friendsIds: friendToDeleteId } }
   ).exec();  
 
+  this.userModel.findByIdAndUpdate(friendToDeleteId._id ,
+    { $pull: { friendsIds: sender._id } }
+  ).exec();  
+
   return friendToDeleteId
 }
 

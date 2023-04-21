@@ -11,9 +11,7 @@ import UserViewModel from './view-models/user.viewModel';
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly userService:UserService){}
-
-  
+  constructor(private readonly userService:UserService){}  
 
   @UseGuards(AccessTokenAuthGuard)
   @Get()
@@ -60,8 +58,8 @@ export class UserController {
 
   @UseGuards(AccessTokenAuthGuard)
   @Get('friends')
-  async getFriends(@Body() friendsIds:Types.ObjectId[]){
-    const friends = await this.userService.getFriends(friendsIds);
+  async getFriends(@UserId() id:Types.ObjectId){
+    const friends = await this.userService.getFriends(id);
 
     return friends;
   }
@@ -78,7 +76,7 @@ export class UserController {
   @Delete('friends/:friendToDeleteId')
   async deleteFriend(@UserId() senderId:Types.ObjectId,@Param('friendToDeleteId') friendToDeleteId:Types.ObjectId){
     const friends = await this.userService.deleteFriend(senderId,friendToDeleteId);
-
+    
     return friends;
   }
 

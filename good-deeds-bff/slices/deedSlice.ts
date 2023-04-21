@@ -19,17 +19,26 @@ export const deedSlice = createSlice({
     setDeeds: (state, action:PayloadAction<Deed[]>) => {
       state.deeds = action.payload
     },
-    removeDeeds: (state) => {
-      state.deeds = [];
+    removeDeed: (state,action:PayloadAction<Deed>) => {
+      const deedIndex = state.deeds.findIndex((deed) => deed._id === action.payload._id);
+      if (deedIndex !== -1) {
+        state.deeds.splice(deedIndex,1);
+      }
     },
     addDeed: (state, action:PayloadAction<Deed>)=>{
-      debugger
-      state.deeds.push(action.payload);
+      
+      state.deeds.push(...state.deeds,action.payload);
+    },
+    updateDeed:(state, action:PayloadAction<Deed>)=>{
+      const deedIndex = state.deeds.findIndex((deed) => deed._id === action.payload._id);
+      if (deedIndex !== -1) {
+        state.deeds[deedIndex] = action.payload;
+      }
     }
   },
 })
 
-export const {setDeeds,removeDeeds, addDeed} = deedSlice.actions;
+export const {setDeeds,removeDeed, addDeed,updateDeed} = deedSlice.actions;
 
 export const selectDeeds = (state: RootState) => state.deed.deeds;
 

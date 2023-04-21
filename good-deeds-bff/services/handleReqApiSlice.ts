@@ -1,12 +1,40 @@
 import { apiSlice } from "./apiSlice";
-import ErrorResponse from "@/types/errorResponse";
-import User from "@/types/user";
-import Auth from "@/types/auth";
 
 
 
 export const reqHandler = apiSlice.injectEndpoints({
   endpoints: (build) => ({
+
+    getRequests: build.mutation<any,void>({
+      query: () => ({
+        url: "api/request",
+        method: "GET",
+      }),
+    }),
+
+    addRequest: build.mutation({
+      query:(credentials) => ({
+        url: "api/request",
+        method: "POST",
+        body: credentials,
+      }),     
+    }),
+
+    deleteRequest: build.mutation({
+      query:(id) => ({
+        url: `api/request/${id}`,
+        method: "DELETE",        
+      }),     
+    }),
+
+    getFriendDeeds: build.mutation<any,void>({
+      query: (id) => ({
+        url: `api/deed/friend/${id}`,
+        method: "GET",
+      }),
+    }),
+
+   
 
     addDeed: build.mutation({
       query:(credentials) => ({
@@ -16,10 +44,24 @@ export const reqHandler = apiSlice.injectEndpoints({
       }),     
     }),  
 
+    deleteDeed:build.mutation({
+      query:(id) => ({
+        url: `api/deed/${id}`,
+        method: "DELETE",        
+      }),     
+    }),  
+
+    getDeeds: build.mutation<any,void>({
+      query: () => ({
+        url: "api/deed",
+        method: "GET",
+      }),
+    }),
+
     updateDeed: build.mutation({
       query:(credentials) => ({
-        url: "api/deed",
-        method: "PATH",
+        url: "api/deed/",
+        method: "PATCH",
         body: credentials,
       }),     
     }), 
@@ -31,6 +73,14 @@ export const reqHandler = apiSlice.injectEndpoints({
       }),
     }),
 
+    updateUser: build.mutation({
+      query:(credentials) => ({
+        url: "api/user",
+        method: "PATCH",
+        body: credentials,
+      }),     
+    }), 
+
     refresh: build.mutation<any,void>({
       query: () => ({
         url: "api/auth/refresh",
@@ -38,9 +88,33 @@ export const reqHandler = apiSlice.injectEndpoints({
       }),
     }),
 
-    getDeeds: build.mutation<any,void>({
+    getFriends: build.mutation<any,void>({
       query: () => ({
-        url: "api/deed",
+        url: "api/user/friends",
+        method: "GET",
+        
+      }),
+    }),
+
+    addFriend: build.mutation({
+      query: (recipientId) => ({
+        url: `api/user/friends/${recipientId}`,
+        method: "POST",
+        
+      }),
+    }),
+   
+    deleteFriend: build.mutation({
+      query: (friendToDeleteId) => ({
+        url: `api/user/friends/${friendToDeleteId}`,
+        method: "DELETE",        
+      }),
+    }),
+
+
+    logOut: build.mutation<any,void>({
+      query: () => ({
+        url: "api/auth/logout",
         method: "GET",
       }),
     }),
@@ -72,5 +146,15 @@ useGetDeedsMutation,
 useRefreshMutation,
 useAddDeedMutation,
 useUpdateDeedMutation,
+useLogOutMutation,
+useDeleteDeedMutation,
+useGetRequestsMutation,
+useAddRequestMutation,
+useDeleteRequestMutation,
+useGetFriendDeedsMutation,
+useAddFriendMutation,
+useDeleteFriendMutation,
+useGetFriendsMutation,
+useUpdateUserMutation,
 
 } = reqHandler;

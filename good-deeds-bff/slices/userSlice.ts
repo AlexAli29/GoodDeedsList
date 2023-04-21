@@ -28,12 +28,21 @@ export const userSlice = createSlice({
       state.email= null;
       state.friendsIds = null;
       state.name = null;
-    }
+    },
+    removeFriendId:(state, action:PayloadAction<string>)=>{
+      debugger
+      const friendIndex = state?.friendsIds?.findIndex((friendId) => friendId === action.payload);
+      if (friendIndex !== -1) {
+        state?.friendsIds?.splice(friendIndex ?? -1,1);
+      };
+   
+    }    
   },
 })
 
-export const {setUser} = userSlice.actions;
+export const {setUser, removeUser, removeFriendId} = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
+export const selectFriendsIds = (state:RootState) => state.user.friendsIds
 
 export default userSlice.reducer;

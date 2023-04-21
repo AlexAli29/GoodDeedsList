@@ -7,7 +7,9 @@ import Request from '@/types/request';
 
 
 
-const initialState: Request[] = []
+const initialState : {requests:Request[]}  = {
+  requests:[]
+}
 
 
 export const requestSlice = createSlice({
@@ -15,16 +17,19 @@ export const requestSlice = createSlice({
   initialState,
   reducers: {
     setRequests: (state, action:PayloadAction<Request[]>) => {
-      state = action.payload
+      state.requests = action.payload
     },
-    removeRequests: (state) => {
-      state = [];
+    removeRequest: (state,action:PayloadAction<Request>) => {
+      const requestIndex = state.requests.findIndex((request) => request._id === action.payload._id);
+      if (requestIndex !== -1) {
+        state.requests.splice(requestIndex,1);
+      }
     },
   },
 })
 
-export const {setRequests,removeRequests} = requestSlice.actions;
+export const {setRequests,removeRequest} = requestSlice.actions;
 
-export const selectRequests = (state: RootState) => state.deed;
+export const selectRequests = (state: RootState) => state.request;
 
 export default requestSlice.reducer;

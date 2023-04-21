@@ -1,7 +1,10 @@
 export default interface Request{
   
+  _id:string
+
   senderId:string
   
+  senderName:string
  
   recipientId: string
  

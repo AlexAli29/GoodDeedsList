@@ -14,8 +14,9 @@ export class RequestService {
   async createRequest (senderId:Types.ObjectId,recipientName:string):Promise<DocumentType<FriendRequestModel> | null>{
 
     const sender = await this.userService.findUserById(senderId);
-
+    
    const recipient = await this.userService.findUserByName(recipientName);
+   
 
    if(sender.friendsIds.includes(recipient._id)){
     throw new ConflictException(ALREADY_FRIEND);
@@ -23,6 +24,7 @@ export class RequestService {
 
    const newRequest= new this.requestModel({
     senderId:senderId,
+    senderName:sender.name,
     recipientId:(await recipient)._id,
     status:RequestStatus.Pending
    })

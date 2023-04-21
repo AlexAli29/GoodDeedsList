@@ -16,6 +16,9 @@ export class FriendRequestModel extends TimeStamps{
   senderId:Types.ObjectId;
   
   @prop()
+  senderName:string;
+
+  @prop()
   recipientId: Types.ObjectId;
 
   @prop({enum:RequestStatus})

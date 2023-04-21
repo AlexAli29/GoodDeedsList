@@ -7,7 +7,7 @@ import style from './loginbutton.module.scss'
   size?: 'default' | 'medium' | 'large',
   children: React.ReactNode,
   color?: 'primary' | 'secondary' | 'danger' | 'neutral' | 'black',
-  action?:()=>any,
+  action?:()=>any
   type?: "button" | "submit" | "reset" | undefined
 }
 

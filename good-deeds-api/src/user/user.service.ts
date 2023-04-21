@@ -52,9 +52,11 @@ async addFriend(senderId:Types.ObjectId, recipientId:Types.ObjectId){
 }
 
 
-async getFriends(friendsIds:Types.ObjectId[]){
+async getFriends(id:Types.ObjectId){
 
-  const friends :Pick<UserModel,'_id' | 'name'>[]= await this.userModel.find({ _id: { $in: friendsIds } }).select('_id name').exec();
+  const user = await this.findUserById(id);
+
+  const friends :Pick<UserModel,'_id' | 'name'>[]= await this.userModel.find({ _id: { $in: user.friendsIds } }).select('_id name').exec();
 
   return friends
 }
@@ -67,15 +69,18 @@ async deleteFriend(senderId:Types.ObjectId,friendToDeleteId:Types.ObjectId){
     throw new NotFoundException(USER_NOT_FOUND);
   }
 
-  const friendIndex =sender.friendsIds.findIndex(id => id = friendToDeleteId);
+  const friendIndex =sender.friendsIds.findIndex(id => id == friendToDeleteId);
 
   if(friendIndex==-1){
     throw new NotFoundException(FRIEND_NOT_FOUND);
   }
 
-  sender.friendsIds.slice(friendIndex,1);
+  const newFriendsArray =  sender.friendsIds.slice(friendIndex,1);
+  sender.friendsIds = newFriendsArray;
   
   (await sender.save()).isNew=false;
+
+  return friendToDeleteId
 }
 
   async findUserById(_id:Types.ObjectId):Promise<UserViewModel | null>{

@@ -62,7 +62,7 @@ export const Nav:FC = () => {
       </Link>     
       <div className={style['nav__button_container']}>
         {loadingUser?<span>Loading...</span>:
-          user?<Link href='/user'>{user.name}</Link>: <Button size='default' color='primary' action={()=>router.push('/login')}>
+          user.name?<Link href='/user'>{user.name}</Link>: <Button size='default' color='primary' action={()=>router.push('/login')}>
           Login
         </Button>
         }

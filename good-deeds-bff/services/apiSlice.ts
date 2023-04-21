@@ -5,7 +5,8 @@ import { BaseQueryApi, FetchArgs, createApi, fetchBaseQuery } from "@reduxjs/too
 import { HYDRATE } from "next-redux-wrapper";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3000/",
+  //baseUrl: "http://localhost:3000/",
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
   credentials: "include",
   prepareHeaders: (Headers, { getState }:{ getState: () => any }) => {
     

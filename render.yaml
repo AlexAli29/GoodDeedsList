@@ -1,29 +1,42 @@
 services:
   proxy:
     image: nginx:latest
-    env:
-      - NGINX_CONFIG=/app/nginx.conf
-    httpPort: 8080
+    volumes:
+      - hostPath: ./nginx.conf
+        containerPath: /etc/nginx/nginx.conf
+    ports:
+      - 8080:80
   good-deeds-bff:
     image: good-deeds-bff:0.1
-    buildCommand: npm run build
-    startCommand: npm run start
-    env:
-      - NODE_ENV=production
-    httpPort: 3001
-    volumes:
-      - type: BIND
-        source: ./good-deeds-bff
-        destination: /app
+    build:
+      context: ./good-deeds-bff
+    environment:
+      - RENDER_SERVICE_NAME=good-deeds-bff
+    envVars:
+      - key: MONGO_URL
+        fromService:
+          type: database
+          name: mongo
+          property: connectionString
+    ports:
+      - 3001:3001
   good-deeds-api:
     image: good-deeds-api:0.1
-    buildCommand: npm run build
-    startCommand: npm run start
-    env:
-      - NODE_ENV=production
-    httpPort: 3000
+    build:
+      context: ./good-deeds-api
+    environment:
+      - RENDER_SERVICE_NAME=good-deeds-api
+    envVars:
+      - key: MONGO_URL
+        fromService:
+          type: database
+          name: mongo
+          property: connectionString
+    ports:
+      - 3000:3000
     dependsOn:
       - mongo
   mongo:
     image: mongo
-    httpPort: 27017
+    ports:
+      - 27017:27017
